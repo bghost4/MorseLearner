@@ -7,7 +7,7 @@ import javafx.stage.Stage;
 public class Launcher extends Application {
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) {
 
         MainWindowController p = new MainWindowController();
 
@@ -16,14 +16,10 @@ public class Launcher extends Application {
             p.shutdown();
         });
 
-        if(p == null) {
-            System.exit(1);
-        } else {
-            Scene scene = new Scene(p);
-            primaryStage.setScene(scene);
-            primaryStage.setTitle("Learn Morse Code");
-            primaryStage.show();
-        }
+        Scene scene = new Scene(p);
+        primaryStage.setScene(scene);
+        primaryStage.setTitle("Learn Morse Code");
+        primaryStage.show();
 
     }
 

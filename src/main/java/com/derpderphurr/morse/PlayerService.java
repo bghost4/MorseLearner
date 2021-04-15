@@ -9,7 +9,6 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 import java.nio.ByteBuffer;
-import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Executors;
 
@@ -17,7 +16,7 @@ public class PlayerService extends Service<Void> {
 
 
     private SourceDataLine line;
-    private int samplerate = 44100;
+    private final int samplerate = 44100;
     private final SimpleIntegerProperty toneFreq = new SimpleIntegerProperty(800);
     private final SimpleIntegerProperty wpm = new SimpleIntegerProperty(15);
     private final SimpleIntegerProperty volume = new SimpleIntegerProperty(4000);
@@ -111,14 +110,17 @@ public class PlayerService extends Service<Void> {
                 while (!quit) {
                         String myString = queue.take();
                         System.out.println("Player Recv Data: " + myString);
-                        List<CodeParticle> data = Codec.translateString(myString);
+                        var data = Codec.translateString(myString);
 
                         ByteBuffer bb = ByteBuffer.allocate(2); //Allocate buffer up here to keep it from re-allocating in loop
 
-                        for (int index = 0; index < data.size(); index++) {
-                            CodeParticle thisElement = data.get(index);
-                            playCodeElement(thisElement,bb);
-                        } //end of for elements
+                        for(CodeCharacter cc : data) {
+                            //report(cc);
+                            for(CodeParticle particle : cc.particles) {
+                                playCodeElement(particle,bb);
+                            }
+
+                        }
 
                 } // while(!quit)
                 return null;

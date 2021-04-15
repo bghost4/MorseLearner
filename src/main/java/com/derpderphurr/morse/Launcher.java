@@ -13,6 +13,7 @@ public class Launcher extends Application {
 
         primaryStage.setOnCloseRequest(eh -> {
             //TODO implement window closing event
+            p.shutdown();
         });
 
         if(p == null) {

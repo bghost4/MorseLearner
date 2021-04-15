@@ -1,5 +1,10 @@
 package com.derpderphurr.morse;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -105,6 +110,40 @@ public class Codec {
 
     public static int timeUnitsToNumSamples(int timeUnits,int wpm, int sampleRate) {
         return WPMTimeUnitToNumSamples(wpm,sampleRate) * timeUnits;
+    }
+
+    public static void dumpWaveInfo(String words, int wpm, int samplerate, File f) throws IOException {
+
+        int toneFreq = 50;
+        double period = (double)samplerate / (double)toneFreq;
+        double amplitude = 4000;
+
+        String myString = words;
+        List<CodeElement> data = Codec.translateString(myString);
+
+        int length = data.stream().mapToInt(ce -> Codec.timeUnitsToNumSamples(ce.units, wpm, samplerate)).sum();
+
+        int bufidx = 0;
+
+        FileOutputStream fos = new FileOutputStream(f);
+
+        for (int index = 0; index < data.size(); index++) {
+            CodeElement thisElement = data.get(index);
+            int numSamples = Codec.timeUnitsToNumSamples(thisElement.units, wpm, samplerate);
+
+            for (int i = 0; i < numSamples; i++) {
+                if (thisElement.type == CodeElement.Type.SPACE) {
+                    fos.write(String.format("0.0%n").getBytes());
+                } else {
+                    double angle = 2.0 * Math.PI * i / period;
+                    double out = (Math.sin(angle) * amplitude);
+                    fos.write(String.format("%d%n",(short)out).getBytes());
+                }
+            }
+        }
+
+        fos.close();
+
     }
 
 }

@@ -52,31 +52,34 @@ public class PlayerService extends Service<Void> {
         return volume;
     }
 
+    private boolean quit = false;
+
     public PlayerService() {
         super();
 
         this.executorProperty().setValue(Executors.newSingleThreadExecutor());
 
-        AudioFormat af = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED,samplerate,16,2,4,samplerate,true);
+        AudioFormat af = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, samplerate, 16, 1, 2, samplerate, true);
         try {
             line = AudioSystem.getSourceDataLine(af);
             line.open(af);
+            line.start();
+            System.out.println("Line Buffer Size: " + line.getBufferSize());
         } catch (LineUnavailableException e) {
             e.printStackTrace();
         }
     }
 
 
-
     public synchronized void playString(String s) {
-        System.out.println("Adding "+s+" to Queue");
+        System.out.println("Adding " + s + " to Queue");
 
-        if(!isRunning()) {
+        if (!isRunning()) {
             System.err.println("Player Service is not running");
         }
-        if(!queue.add(s)) {
+        if (!queue.add(s)) {
             System.err.println("Queue Full");
-        }else {
+        } else {
             System.out.println("Added to Queue");
         }
     }
@@ -92,53 +95,43 @@ public class PlayerService extends Service<Void> {
             protected Void call() throws Exception {
                 System.err.println("Task Started");
 
-                while(true) {
+                while (!quit) {
                     if (queue.isEmpty()) {
-                        Thread.sleep(500);
-                        line.stop();
+                        Thread.sleep(100);
                     } else {
-
-                        double period = (double)samplerate / (double)toneFreq.get();
+                        double period = (double) samplerate / (double) toneFreq.get();
                         double amplitude = volume.get();
 
                         String myString = queue.remove();
                         System.out.println("Player Recv Data: " + myString);
                         List<CodeElement> data = Codec.translateString(myString);
 
-                        int length = data.stream().mapToInt(ce -> Codec.timeUnitsToNumSamples(ce.units, wpm.get(), samplerate)).sum();
-                        ByteBuffer bb = ByteBuffer.allocate(length * 4);
-
-                        int bufidx = 0;
+                        ByteBuffer bb = ByteBuffer.allocate(2); //Allocate buffer up here to keep it from re-allocating in loop
 
                         for (int index = 0; index < data.size(); index++) {
                             CodeElement thisElement = data.get(index);
-                            System.out.println("Playing: "+thisElement);
                             int numSamples = Codec.timeUnitsToNumSamples(thisElement.units, wpm.get(), samplerate);
 
                             for (int i = 0; i < numSamples; i++) {
                                 if (thisElement.type == CodeElement.Type.SPACE) {
                                     bb.putShort((short) 0);
-                                    bb.putShort((short) 0);
                                 } else {
                                     double angle = 2.0 * Math.PI * i / period;
                                     double out = (Math.sin(angle) * amplitude);
                                     bb.putShort((short) out);
-                                    bb.putShort((short) out);
                                 }
-                            }
-                        }
+                                line.write(bb.array(), 0, bb.limit());
+                                bb.rewind();
+                            } //end of playing this element
+                        } //end of for elements
+                    } //end of else
+                } // while(!quit)
+                return null;
+            } //end of Void call()
+        }; //end of new Task
+    } //end of CreateTask
 
-
-                        line.start();
-                        line.write(bb.array(),0,bb.limit());
-                        line.stop();
-                        line.flush();
-                    }
-                }
-
-            }
-        };
-
+    public void shutdown() {
+        quit = true;
     }
-
 }

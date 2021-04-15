@@ -1,6 +1,8 @@
 package com.derpderphurr.morse;
 
 import javax.sound.sampled.*;
+import java.io.File;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.List;
 
@@ -53,7 +55,12 @@ public class MixerTest {
 
     public static void main(String[] args) {
 
-        playString("A B C",600,15,4000);
+        //playString("A B C",600,15,4000);
+        try {
+            Codec.dumpWaveInfo("A",15,44100,new File("wavedump.txt"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 

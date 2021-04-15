@@ -30,6 +30,16 @@ public class MainWindowController extends VBox {
     }
 
     @FXML
+    private void playText(ActionEvent e) {
+        player.playString(txtPlayText.getText());
+    }
+
+    public void shutdown() { player.shutdown(); }
+
+    @FXML
+    private TextField txtPlayText;
+
+    @FXML
     private ResourceBundle resources;
 
     @FXML
@@ -72,7 +82,7 @@ public class MainWindowController extends VBox {
         txtWPM.textProperty().addListener((ob,ov,nv) -> {
             try{
                 int value = Integer.parseInt(nv);
-                player.volumeProperty().set(value);
+                player.wpmProperty().set(value);
             }catch(NumberFormatException nfe) {
 
             }

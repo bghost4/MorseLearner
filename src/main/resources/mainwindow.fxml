@@ -169,7 +169,12 @@
             <Tab text="Practice Send" />
             <Tab text="Play Text">
               <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                <VBox>
+                    <HBox>
+                        <TextField fx:id="txtPlayText" promptText="Input Text to play"/>
+                        <Button mnemonicParsing="false" text="play" onAction="#playText"/>
+                    </HBox>
+                </VBox>
               </content>
             </Tab>
         </tabs>

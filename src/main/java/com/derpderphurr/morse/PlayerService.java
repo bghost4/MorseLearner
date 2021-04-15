@@ -11,6 +11,7 @@ import javax.sound.sampled.SourceDataLine;
 import java.nio.ByteBuffer;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 
 public class PlayerService extends Service<Void> {
 
@@ -49,6 +50,18 @@ public class PlayerService extends Service<Void> {
 
     private boolean quit = false;
 
+    public static final Consumer<CodeCharacter> defaultConsumer = (e) -> {};
+
+    private Consumer<CodeCharacter> reporter = defaultConsumer;
+
+    public void setReporter(Consumer<CodeCharacter> c) {
+        if( c!= null ) {
+            reporter = c;
+        } else {
+            reporter = defaultConsumer;
+        }
+    }
+
     public PlayerService() {
         super();
 
@@ -64,7 +77,6 @@ public class PlayerService extends Service<Void> {
             e.printStackTrace();
         }
     }
-
 
     public synchronized void playString(String s) {
         System.out.println("Adding " + s + " to Queue");
@@ -89,7 +101,7 @@ public class PlayerService extends Service<Void> {
 
             private void playCodeElement(CodeParticle thisElement, ByteBuffer bb) {
                 int numSamples = Codec.timeUnitsToNumSamples(thisElement.units, wpm.get(), samplerate);
-                System.out.printf("Playing: '%s' (%d samples) %n",thisElement,numSamples);
+
                 for (int i = 0; i < numSamples; i++) {
                     if (thisElement.type == CodeParticle.Type.SPACE) {
                         bb.putShort((short) 0);
@@ -109,13 +121,12 @@ public class PlayerService extends Service<Void> {
 
                 while (!quit) {
                         String myString = queue.take();
-                        System.out.println("Player Recv Data: " + myString);
                         var data = Codec.translateString(myString);
 
                         ByteBuffer bb = ByteBuffer.allocate(2); //Allocate buffer up here to keep it from re-allocating in loop
 
                         for(CodeCharacter cc : data) {
-                            System.out.printf("Playing: \'%s\'",cc.getCha());
+                            reporter.accept(cc);
                             for(CodeParticle particle : cc.particles) {
                                 playCodeElement(particle,bb);
                             }

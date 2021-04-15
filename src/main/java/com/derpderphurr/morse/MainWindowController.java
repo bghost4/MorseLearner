@@ -13,6 +13,7 @@ import javafx.scene.layout.VBox;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 
 public class MainWindowController extends VBox {
 
@@ -31,7 +32,16 @@ public class MainWindowController extends VBox {
     }
 
     @FXML
+    private void clearPlayText(ActionEvent e) {
+        txtPlayRender.clear();
+        txtPlayText.clear();
+    }
+
+    @FXML
     private void playText(ActionEvent e) {
+        player.setReporter((cc) -> {
+            txtPlayRender.appendText(cc.getCha());
+        });
         player.playString(txtPlayText.getText());
     }
 
@@ -39,6 +49,9 @@ public class MainWindowController extends VBox {
 
     @FXML
     private TextArea txtPlayText;
+
+    @FXML
+    private TextArea txtPlayRender;
 
     @FXML
     private ResourceBundle resources;

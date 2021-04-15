@@ -171,8 +171,12 @@
             <Tab text="Play Text">
               <content>
                 <VBox>
-                        <TextArea fx:id="txtPlayText" promptText="Input Text to play" VBox.vgrow="ALWAYS"/>
+                        <TextArea fx:id="txtPlayText" promptText="Input Text to play" VBox.vgrow="ALWAYS" wrapText="true"/>
+                        <TextArea fx:id="txtPlayRender" VBox.vgrow="ALWAYS" editable="false" wrapText="true"/>
+                    <HBox>
                         <Button mnemonicParsing="false" text="play" onAction="#playText"/>
+                        <Button mnemonicParsing="false" text="Clear" onAction="#clearPlayText"/>
+                    </HBox>
                 </VBox>
               </content>
             </Tab>

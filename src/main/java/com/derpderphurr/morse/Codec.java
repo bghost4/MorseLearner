@@ -69,14 +69,17 @@ public class Codec {
             return Stream.of(new CodeParticle(CodeParticle.Type.MARK,3));
         } else {
             //any char other than . or - is considered a space
+            System.err.println(String.format("Unknown code char: \"%c\"",c));
             return Stream.of(new CodeParticle(CodeParticle.Type.SPACE,4));
         }
     }
 
-    private static CodeCharacter translateCharacter(String ch,int index) {
+    private static CodeCharacter translateCharacter(String ch) {
         String letter = decodeMap.getOrDefault(ch, " ");
 
-        return new CodeCharacter(index, ch,
+        System.out.println("Translate char: "+ch);
+
+        return new CodeCharacter(ch,
                 Stream.concat(
                         letter.chars().sequential() //decode char into its .- pattern
                                 .mapToObj(c -> translateDitDah((char) c)) // translate those chars into marks/space
@@ -89,17 +92,17 @@ public class Codec {
         );
     }
 
-
-    private static Stream<Pair<Integer,String>> fragment(String in) {
-        return Stream.of(new Pair<>(0,in));
+    private static Stream<String> fragment(String in) {
+        //TODO add additional functionality to recognize codes that get grouped together
+        return in.chars().mapToObj(c -> ""+(char)c);
     }
 
     public static List<CodeCharacter> translateString(String string) {
         return fragment(string
                 .toLowerCase(Locale.ROOT)   //everything to lowercase
-                .replaceAll(" +"," "))   //replace multiple spaces with a single space
-                   //turn into instream of char, keep everything in order
-                .map(c -> translateCharacter(c.getValue(),c.getKey())) //translate character into mark space stream
+                .replaceAll(" +"," ")
+                )   //replace multiple spaces with a single space
+                .map(c -> translateCharacter(c)) //translate character into mark space stream
                 .collect(Collectors.toList());  // return a list of the mark,space elements
     }
 

@@ -89,12 +89,12 @@ public class PlayerService extends Service<Void> {
 
             private void playCodeElement(CodeParticle thisElement, ByteBuffer bb) {
                 int numSamples = Codec.timeUnitsToNumSamples(thisElement.units, wpm.get(), samplerate);
-
+                System.out.printf("Playing: '%s' (%d samples) %n",thisElement,numSamples);
                 for (int i = 0; i < numSamples; i++) {
                     if (thisElement.type == CodeParticle.Type.SPACE) {
                         bb.putShort((short) 0);
                     } else {
-                        double angle = 2.0 * Math.PI * i / (double) samplerate / (double) toneFreq.get();
+                        double angle = 2.0 * Math.PI * i / ((double) samplerate / (double) toneFreq.get());
                         double out = (Math.sin(angle) * volumeProperty().get());
                         bb.putShort((short) out);
                     }
@@ -115,11 +115,10 @@ public class PlayerService extends Service<Void> {
                         ByteBuffer bb = ByteBuffer.allocate(2); //Allocate buffer up here to keep it from re-allocating in loop
 
                         for(CodeCharacter cc : data) {
-                            //report(cc);
+                            System.out.printf("Playing: \'%s\'",cc.getCha());
                             for(CodeParticle particle : cc.particles) {
                                 playCodeElement(particle,bb);
                             }
-
                         }
 
                 } // while(!quit)
@@ -129,6 +128,9 @@ public class PlayerService extends Service<Void> {
     } //end of CreateTask
 
     public void shutdown() {
+        line.flush();
+        line.stop();
         quit = true;
+        System.err.println("Quitting Task");
     }
 }

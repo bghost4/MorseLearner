@@ -98,6 +98,8 @@ public class Codec {
 
     public static int WPMTimeUnitToNumSamples(int wpm,int samplerate) {
         //wpm = 50 elements == 1 word, ~ (50 * wpm) / 60 / 1000
+        // 1wpm = 50 elements a minute
+        //return (int) ( 1.0/ ((50.0/60.0) * (double)wpm) / (double)samplerate );
         return (int)(1/(((double)wpm*50.0)/60.0/(double)samplerate));
     }
 

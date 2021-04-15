@@ -53,7 +53,7 @@ public class MixerTest {
 
     public static void main(String[] args) {
 
-        playString("C",440,15,4000);
+        playString("A B C",600,15,4000);
 
     }
 

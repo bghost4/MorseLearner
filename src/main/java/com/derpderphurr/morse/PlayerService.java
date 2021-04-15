@@ -26,7 +26,7 @@ public class PlayerService extends Service<Void> {
     private final SimpleIntegerProperty wpm = new SimpleIntegerProperty(15);
     private final SimpleIntegerProperty volume = new SimpleIntegerProperty(4000);
 
-    private final BlockingQueue<String> queue = new ArrayBlockingQueue<String>(6);
+    private final BlockingQueue<String> queue = new ArrayBlockingQueue<>(6);
 
     public int getToneFreq() {
         return toneFreq.get();
@@ -98,7 +98,7 @@ public class PlayerService extends Service<Void> {
                         line.stop();
                     } else {
 
-                        double period = samplerate / toneFreq.get();
+                        double period = (double)samplerate / (double)toneFreq.get();
                         double amplitude = volume.get();
 
                         String myString = queue.remove();
@@ -108,11 +108,12 @@ public class PlayerService extends Service<Void> {
                         int length = data.stream().mapToInt(ce -> Codec.timeUnitsToNumSamples(ce.units, wpm.get(), samplerate)).sum();
                         ByteBuffer bb = ByteBuffer.allocate(length * 4);
 
+                        int bufidx = 0;
+
                         for (int index = 0; index < data.size(); index++) {
                             CodeElement thisElement = data.get(index);
                             System.out.println("Playing: "+thisElement);
                             int numSamples = Codec.timeUnitsToNumSamples(thisElement.units, wpm.get(), samplerate);
-                            System.err.println("Number of Samples: "+numSamples);
 
                             for (int i = 0; i < numSamples; i++) {
                                 if (thisElement.type == CodeElement.Type.SPACE) {
@@ -126,9 +127,12 @@ public class PlayerService extends Service<Void> {
                                 }
                             }
                         }
+
+
                         line.start();
                         line.write(bb.array(),0,bb.limit());
                         line.stop();
+                        line.flush();
                     }
                 }
 

@@ -13,7 +13,7 @@ public class MixerTest {
         double period = 44100.0/toneFreq;
         double amplitude = volume;
 
-        List<CodeElement> data = Codec.translateString(s);
+        List<CodeParticle> data = Codec.translateString(s);
 
         AudioFormat af = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED,44100,16,2,4,44100,true);
         try {
@@ -25,12 +25,12 @@ public class MixerTest {
             ByteBuffer bb = ByteBuffer.allocate(4);
 
             for(int index=0; index < data.size(); index++) {
-                CodeElement thisElement = data.get(index);
+                CodeParticle thisElement = data.get(index);
 
                 int numSamples = Codec.timeUnitsToNumSamples(thisElement.units,wpm,44100);
 
                 for (int i=0; i < numSamples ; i++) {
-                    if(thisElement.type == CodeElement.Type.SPACE) {
+                    if(thisElement.type == CodeParticle.Type.SPACE) {
                         bb.putShort((short)0);
                         bb.putShort((short)0);
                         line.write(bb.array(),0,4);

@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 
@@ -37,7 +38,7 @@ public class MainWindowController extends VBox {
     public void shutdown() { player.shutdown(); }
 
     @FXML
-    private TextField txtPlayText;
+    private TextArea txtPlayText;
 
     @FXML
     private ResourceBundle resources;

@@ -1,11 +1,11 @@
 package com.derpderphurr.morse;
 
-public class CodeElement {
+public class CodeParticle {
     public enum Type { MARK,SPACE }
     public final int units;
     public final Type type;
 
-    public CodeElement(Type type,int units) {
+    public CodeParticle(Type type, int units) {
         this.units = units;
         this.type = type;
     }

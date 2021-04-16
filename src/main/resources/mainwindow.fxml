@@ -142,7 +142,13 @@
                         <Button mnemonicParsing="false" onAction="#onLearnButton" text="X" GridPane.columnIndex="5" GridPane.rowIndex="3" />
                         <Button mnemonicParsing="false" onAction="#onLearnButton" text="Y" GridPane.columnIndex="6" GridPane.rowIndex="3" />
                         <Button mnemonicParsing="false" onAction="#onLearnButton" text="Z" GridPane.columnIndex="7" GridPane.rowIndex="3" />
-                        <Button mnemonicParsing="false" onAction="#onLearnButton" text="1" GridPane.rowIndex="5" />
+
+                         <Label text="Numbers" GridPane.columnSpan="2" GridPane.rowIndex="4">
+                             <font>
+                                 <Font name="System Bold" size="18.0" />
+                             </font>
+                         </Label>
+                         <Button mnemonicParsing="false" onAction="#onLearnButton" text="1" GridPane.rowIndex="5" />
                         <Button mnemonicParsing="false" onAction="#onLearnButton" text="2" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                         <Button mnemonicParsing="false" onAction="#onLearnButton" text="3" GridPane.columnIndex="2" GridPane.rowIndex="5" />
                         <Button mnemonicParsing="false" onAction="#onLearnButton" text="4" GridPane.columnIndex="3" GridPane.rowIndex="5" />
@@ -151,17 +157,13 @@
                         <Button mnemonicParsing="false" onAction="#onLearnButton" text="7" GridPane.columnIndex="6" GridPane.rowIndex="5" />
                         <Button mnemonicParsing="false" onAction="#onLearnButton" text="8" GridPane.columnIndex="7" GridPane.rowIndex="5" />
                         <Button mnemonicParsing="false" onAction="#onLearnButton" text="9" GridPane.columnIndex="8" GridPane.rowIndex="5" />
-                        <Label text="Numbers" GridPane.columnSpan="2" GridPane.rowIndex="4">
-                           <font>
-                              <Font name="System Bold" size="18.0" />
-                           </font>
-                        </Label>
+                        <Button mnemonicParsing="false" onAction="#onLearnButton" text="0" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+
                         <Label text="Punctuation" GridPane.columnSpan="2" GridPane.rowIndex="7">
                            <font>
                               <Font name="System Bold" size="18.0" />
                            </font>
                         </Label>
-                        <Button mnemonicParsing="false" text="0" GridPane.rowIndex="6" />
                      </children>
                   </GridPane>
                </content>

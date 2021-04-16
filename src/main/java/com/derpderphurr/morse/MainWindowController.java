@@ -17,7 +17,7 @@ import java.util.function.Consumer;
 
 public class MainWindowController extends VBox {
 
-    private PlayerService player;
+    private PlayerThread player;
 
     public MainWindowController() {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/mainwindow.fxml"));
@@ -39,10 +39,8 @@ public class MainWindowController extends VBox {
 
     @FXML
     private void playText(ActionEvent e) {
-        player.setReporter((cc) -> {
-            txtPlayRender.appendText(cc.getCha());
-        });
-        player.playString(txtPlayText.getText());
+        txtPlayRender.clear();
+        player.queueMessage(new PlayJob(txtPlayText.getText(),() -> {}, (cc) -> txtPlayRender.appendText(cc.getCha())));
     }
 
     public void shutdown() { player.shutdown(); }
@@ -73,7 +71,7 @@ public class MainWindowController extends VBox {
         Object obj = event.getSource();
         if(obj instanceof Button) {
             String str = ((Button)obj).getText();
-            player.playString(str);
+            player.queueMessage(new PlayJob(str));
         }
     }
 
@@ -83,16 +81,13 @@ public class MainWindowController extends VBox {
         assert txtToneFreq != null : "fx:id=\"txtToneFreq\" was not injected: check your FXML file 'mainwindow.fxml'.";
         assert sldVolume != null : "fx:id=\"sldVolume\" was not injected: check your FXML file 'mainwindow.fxml'.";
 
-        Platform.runLater(() -> {
-        player = new PlayerService();
-        player.setOnFailed(wse -> System.out.println("Player Task Failed"));
-        player.setOnSucceeded(wse -> System.out.println("Player Task Finished Successfully"));
-        player.setOnCancelled(wse -> System.out.println("Player Task Was Cancelled"));
-        player.setOnSucceeded(wse -> System.out.println("Player Task Finished Successfully"));
-        player.start();
-        });
 
-        sldVolume.valueProperty().addListener((ob,ov,nv) -> player.volumeProperty().set(nv.intValue()));
+        player = new PlayerThread();
+        player.setDaemon(true);
+        player.start();
+
+        sldVolume.valueProperty().bindBidirectional(player.volumeProperty());
+        txtWPM.setText(""+player.wpmProperty().get());
         txtWPM.textProperty().addListener((ob,ov,nv) -> {
             try{
                 int value = Integer.parseInt(nv);
@@ -102,10 +97,11 @@ public class MainWindowController extends VBox {
             }
         });
 
+        txtToneFreq.setText(""+player.toneProperty().get());
         txtToneFreq.textProperty().addListener((ob,ov,nv) -> {
             try{
                 int value = Integer.parseInt(nv);
-                player.toneFreqProperty().set(value);
+                player.toneProperty().set(value);
             }catch(NumberFormatException nfe) {
 
             }

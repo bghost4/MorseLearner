@@ -1,9 +1,7 @@
 package com.derpderphurr.morse;
 
 import javafx.application.Platform;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.*;
 
 import javax.sound.sampled.*;
 import java.nio.ByteBuffer;
@@ -14,8 +12,14 @@ public class PlayerThread extends Thread {
     private final SimpleBooleanProperty playing = new SimpleBooleanProperty(false);
     private final SimpleIntegerProperty wpm = new SimpleIntegerProperty(20);
     private final SimpleIntegerProperty tone = new SimpleIntegerProperty(660);
-    private final SimpleDoubleProperty volume = new SimpleDoubleProperty(50);
+    private final SimpleDoubleProperty volume = new SimpleDoubleProperty(4096); //probably should rescale this to the bounds of a short
     private final SimpleBooleanProperty isRunning = new SimpleBooleanProperty(false);
+
+    public IntegerProperty wpmProperty() { return wpm; }
+    public IntegerProperty toneProperty() { return tone; }
+    public DoubleProperty volumeProperty() { return volume; }
+    public ReadOnlyBooleanProperty isRunningProperty() { return isRunning; }
+    public ReadOnlyBooleanProperty isPlayingProperty() { return playing; }
 
     private SourceDataLine line;
     private final int sampleRate = 44100;

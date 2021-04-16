@@ -15,6 +15,10 @@ public class PlayJob {
         this.reporter = reporter;
     }
 
+    public PlayJob(String message) {
+        this(message,() -> {},(cc) -> {});
+    }
+
     public String getMessage() {
         return message;
     }

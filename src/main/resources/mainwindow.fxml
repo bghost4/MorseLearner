@@ -56,7 +56,7 @@
         </Menu>
         <Menu mnemonicParsing="false" text="Help">
           <items>
-            <MenuItem mnemonicParsing="false" text="About MyHelloApp" />
+            <MenuItem mnemonicParsing="false" onAction="#onAbout" text="About MorseLearner / Credits" />
           </items>
         </Menu>
       </menus>
@@ -168,13 +168,69 @@
                   </GridPane>
                </content>
             </Tab>
-          <Tab text="Practice Rcv" />
-            <Tab text="Practice Send" />
+
+            <Tab text="Rcv Letters">
+                <content>
+                    <Label text="Not Implemented">
+                        <Font name="System Bold" size="18.0" />
+                    </Label>
+                </content>
+            </Tab>
+
+            <Tab text="Rcv Words">
+                <content>
+                    <Label text="Not Implemented">
+                        <Font name="System Bold" size="18.0" />
+                    </Label>
+                </content>
+            </Tab>
+
+            <Tab text="Rcv Messages">
+                <content>
+                    <Label text="Not Implemented">
+                        <Font name="System Bold" size="18.0" />
+                    </Label>
+                </content>
+            </Tab>
+
+            <Tab text="Send Letters">
+                <content>
+                    <Label text="Not Implemented">
+                        <Font name="System Bold" size="18.0" />
+                    </Label>
+                </content>
+            </Tab>
+
+            <Tab text="Send Words" >
+                <content>
+                    <Label text="Not Implemented">
+                        <Font name="System Bold" size="18.0" />
+                    </Label>
+                </content>
+            </Tab>
+
+            <Tab text="Relay Message">
+                <content>
+                    <Label text="Not Implemented">
+                        <Font name="System Bold" size="18.0" />
+                    </Label>
+                </content>
+            </Tab>
+
+            <Tab text="Practice Timing">
+                <content>
+                    <Label text="Not Implemented">
+                        <Font name="System Bold" size="18.0" />
+                    </Label>
+                </content>
+            </Tab>
+
             <Tab text="Play Text">
               <content>
                 <VBox>
-                        <TextArea fx:id="txtPlayText" promptText="Input Text to play" VBox.vgrow="ALWAYS" wrapText="true"/>
-                        <TextArea fx:id="txtPlayRender" VBox.vgrow="ALWAYS" editable="false" wrapText="true"/>
+                    <Label text=""/>
+                    <TextArea fx:id="txtPlayText" promptText="Input Text to play" VBox.vgrow="ALWAYS" wrapText="true"/>
+                    <TextArea fx:id="txtPlayRender" VBox.vgrow="ALWAYS" editable="false" wrapText="true"/>
                     <HBox>
                         <Button mnemonicParsing="false" text="play" onAction="#playText"/>
                         <Button mnemonicParsing="false" text="Clear" onAction="#clearPlayText"/>

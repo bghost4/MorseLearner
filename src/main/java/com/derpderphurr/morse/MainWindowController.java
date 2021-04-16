@@ -4,10 +4,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Button;
-import javafx.scene.control.Slider;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
@@ -29,6 +26,23 @@ public class MainWindowController extends VBox {
         } catch (IOException exception) {
             throw new RuntimeException("Failed to Load FXML",exception);
         }
+    }
+
+    @FXML
+    private void onAbout(ActionEvent e) {
+        Alert a = new Alert(Alert.AlertType.INFORMATION);
+
+        a.setHeaderText("MorseLearner Info an Credits");
+        StringBuffer sb = new StringBuffer();
+        sb.append("Developed with Adopt OpenJDK-14.02 <https://adoptopenjdk.net/>\n");
+        sb.append("Jetbrains IntellaJ <https://www.jetbrains.com/idea/> \n");
+        sb.append("JavaFX <https://openjfx.io/>\n");
+        sb.append("Gradle <https://gradle.org/>\n\n");
+        sb.append("Special Thanks goes out to user tim.kahn @ freesound.org for creating Phonetic Alphabet\n");
+        sb.append("\t<https://freesound.org/people/tim.kahn/packs/14153/>");
+        a.setContentText(sb.toString());
+
+        a.showAndWait();
     }
 
     @FXML

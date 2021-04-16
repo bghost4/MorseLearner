@@ -50,7 +50,6 @@ public class PlayerThread extends Thread {
     }
 
     private final ArrayBlockingQueue<Playable> queue = new ArrayBlockingQueue<>(20);
-    private final ArrayBlockingQueue<Character> phonetic = new ArrayBlockingQueue<>(5);
 
     private void playCodeElement(CodeParticle thisElement, ByteBuffer bb) {
         int numSamples = Codec.timeUnitsToNumSamples(thisElement.units, wpm.get(), sampleRate);
@@ -84,7 +83,7 @@ public class PlayerThread extends Thread {
         }
     }
 
-    private void playPhonetic(CodeCharacter cc) throws IOException, UnsupportedAudioFileException, LineUnavailableException {
+    private void playPhonetic(CodeCharacter cc) throws IOException, UnsupportedAudioFileException {
         Optional<AudioInputStream> oais = Codec.getPhoneticInputStream(cc);
         oais.ifPresent(ais -> {
             int nBytesRead = 0;
@@ -103,7 +102,7 @@ public class PlayerThread extends Thread {
         });
     }
 
-    private void playCodeList(Playable myJob,ByteBuffer bb) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
+    private void playCodeList(Playable myJob,ByteBuffer bb) {
         var data = Codec.translateString(myJob.getMessage());
         for(CodeCharacter cc : data) {
             Platform.runLater(() -> myJob.getReporter().accept(cc));
@@ -115,11 +114,6 @@ public class PlayerThread extends Thread {
             if(cancelPlayback) { break; }
         }
 
-    }
-
-
-    public void queuePhonetic(char c) {
-        phonetic.add(c);
     }
 
     @Override
@@ -150,13 +144,6 @@ public class PlayerThread extends Thread {
 
             } catch (InterruptedException e) {
                 quit = true;
-            } catch (LineUnavailableException e) {
-                e.printStackTrace();
-                quit = true;
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (UnsupportedAudioFileException e) {
-                e.printStackTrace();
             }
         } // while(!quit)
         Platform.runLater(() -> isRunning.set(false));

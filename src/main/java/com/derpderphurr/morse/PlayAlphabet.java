@@ -1,9 +1,7 @@
 package com.derpderphurr.morse;
 
 import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -24,9 +22,7 @@ public class PlayAlphabet extends Thread {
             try {
                 Optional<AudioInputStream> oais = Codec.getPhoneticInputStream(c);
                 oais.ifPresent((ais) -> player.queueMessage(new Playable(ais)) );
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (UnsupportedAudioFileException e) {
+            } catch (IOException | UnsupportedAudioFileException e) {
                 e.printStackTrace();
             }
 

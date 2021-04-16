@@ -37,15 +37,14 @@ public class MainWindowController extends VBox {
         Alert a = new Alert(Alert.AlertType.INFORMATION);
 
         a.setHeaderText("MorseLearner Info an Credits");
-        StringBuffer sb = new StringBuffer();
-        sb.append("Developed with Adopt OpenJDK-14.02 <https://adoptopenjdk.net/>\n");
-        sb.append("Jetbrains IntellaJ <https://www.jetbrains.com/idea/> \n");
-        sb.append("JavaFX <https://openjfx.io/>\n");
-        sb.append("Gradle <https://gradle.org/>\n\n");
-        sb.append("Special Thanks goes out to user tim.kahn @ freesound.org for creating Phonetic Alphabet\n");
-        sb.append("Special Thanks to Amy Gedgaudas for providing their voice");
-        sb.append("\t<https://freesound.org/people/tim.kahn/packs/14153/>");
-        a.setContentText(sb.toString());
+        String sb = "Developed with Adopt OpenJDK-14.02 <https://adoptopenjdk.net/>\n" +
+                "Jetbrains IntellaJ <https://www.jetbrains.com/idea/> \n" +
+                "JavaFX <https://openjfx.io/>\n" +
+                "Gradle <https://gradle.org/>\n\n" +
+                "Special Thanks goes out to user tim.kahn @ freesound.org for creating Phonetic Alphabet\n" +
+                "Special Thanks to Amy Gedgaudas for providing their voice" +
+                "\t<https://freesound.org/people/tim.kahn/packs/14153/>";
+        a.setContentText(sb);
 
         a.showAndWait();
     }

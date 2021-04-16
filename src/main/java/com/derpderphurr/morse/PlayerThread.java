@@ -124,7 +124,6 @@ public class PlayerThread extends Thread {
                     if(cancelPlayback) { break; }
                 }
 
-
                 Platform.runLater(myJob.getOnFinished());
 
             } catch (InterruptedException e) {

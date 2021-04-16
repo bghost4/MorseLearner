@@ -66,7 +66,7 @@ public class Codec {
         //Punctuation stolen from: https://www.electronics-notes.com/articles/ham_radio/morse_code/characters-table-chart.php
     }
 
-    private static final Map<Character,String> phonetics = new HashMap<>();
+    public static final Map<Character,String> phonetics = new HashMap<>();
     static {
         phonetics.put('a',"/phonetic/a.wav");
         phonetics.put('b',"/phonetic/b.wav");

@@ -29,6 +29,12 @@ public class MainWindowController extends VBox {
     }
 
     @FXML
+    private void playAlphabet(ActionEvent e) {
+        PlayAlphabet t = new PlayAlphabet(player);
+        t.start();
+    }
+
+    @FXML
     private void onAbout(ActionEvent e) {
         Alert a = new Alert(Alert.AlertType.INFORMATION);
 

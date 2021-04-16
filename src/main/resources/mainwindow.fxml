@@ -234,6 +234,7 @@
                     <HBox>
                         <Button mnemonicParsing="false" text="play" onAction="#playText"/>
                         <Button mnemonicParsing="false" text="Clear" onAction="#clearPlayText"/>
+                        <Button mnemonicParsing="false" text="play Alphabet" onAction="#playAlphabet"/>
                     </HBox>
                 </VBox>
               </content>

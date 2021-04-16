@@ -12,6 +12,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 public class PlayerThread extends Thread {
 
@@ -42,7 +43,11 @@ public class PlayerThread extends Thread {
     }
 
     public void queueMessage(PlayJob p) {
-        queue.add(p);
+        try {
+            queue.offer(p,30, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public void shutdown() {

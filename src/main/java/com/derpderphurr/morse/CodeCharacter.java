@@ -11,7 +11,6 @@ public class CodeCharacter {
         this.particles = ditdah;
     }
 
-
     public String getCha() {
         return cha;
     }

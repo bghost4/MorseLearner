@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 
 public class PlayerThread extends Thread {
@@ -19,16 +20,19 @@ public class PlayerThread extends Thread {
     private final SimpleIntegerProperty tone = new SimpleIntegerProperty(660);
     private final SimpleDoubleProperty volume = new SimpleDoubleProperty(4096); //probably should rescale this to the bounds of a short
     private final SimpleBooleanProperty isRunning = new SimpleBooleanProperty(false);
+    private final SimpleBooleanProperty playPhonetic = new SimpleBooleanProperty(true);
 
     public IntegerProperty wpmProperty() { return wpm; }
     public IntegerProperty toneProperty() { return tone; }
     public DoubleProperty volumeProperty() { return volume; }
     public ReadOnlyBooleanProperty isRunningProperty() { return isRunning; }
     public ReadOnlyBooleanProperty isPlayingProperty() { return playing; }
+    public BooleanProperty playPhoneticProperty() { return playPhonetic;}
 
     private SourceDataLine line;
-    private final int sampleRate = 44100;
-    private final AudioFormat defaultAudioFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, sampleRate, 16, 1, 2, sampleRate, false);
+    private static final int sampleRate = 44100;
+    private static final AudioFormat defaultAudioFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, sampleRate, 16, 1, 2, sampleRate, false);
+
 
     private boolean quit = false;
     private boolean cancelPlayback = false;
@@ -64,28 +68,23 @@ public class PlayerThread extends Thread {
         }
     }
 
-    private void playPhonetic(char c) throws IOException, UnsupportedAudioFileException, LineUnavailableException {
-        //Load Phonetic as Clip
-        InputStream clipStream = this.getClass().getResourceAsStream("/phonetic/a.wav");
-        if(clipStream == null) {
-            System.err.println("unable to load reasource");
-        }
-        AudioInputStream ais = AudioSystem.getAudioInputStream(new BufferedInputStream(clipStream));
-
-        int nBytesRead = 0;
-        byte[] abData = new byte[(int)ais.getFormat().getSampleRate()];
-        while (nBytesRead != -1) {
-            try {
-                nBytesRead = ais.read(abData, 0, abData.length);
-            } catch (IOException e) {
-                e.printStackTrace();
+    private void playPhonetic(CodeCharacter cc) throws IOException, UnsupportedAudioFileException, LineUnavailableException {
+        Optional<AudioInputStream> oais = Codec.getPhoneticInputStream(cc);
+        oais.ifPresent(ais -> {
+            int nBytesRead = 0;
+            byte[] abData = new byte[(int)ais.getFormat().getSampleRate()];
+            while (nBytesRead != -1) {
+                try {
+                    nBytesRead = ais.read(abData, 0, abData.length);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if (nBytesRead >= 0) {
+                    @SuppressWarnings("unused")
+                    int nBytesWritten = line.write(abData, 0, nBytesRead);
+                }
             }
-            if (nBytesRead >= 0) {
-                @SuppressWarnings("unused")
-                int nBytesWritten = line.write(abData, 0, nBytesRead);
-            }
-        }
-
+        });
     }
 
     public void queuePhonetic(char c) {
@@ -108,8 +107,6 @@ public class PlayerThread extends Thread {
                 if( queue.isEmpty() ) { cancelPlayback = false; }
                 PlayJob myJob = queue.take();
 
-                playPhonetic('a');
-
                 var data = Codec.translateString(myJob.getMessage());
 
                 ByteBuffer bb = ByteBuffer.allocate(2); //Allocate buffer up here to keep it from re-allocating in loop
@@ -117,6 +114,7 @@ public class PlayerThread extends Thread {
 
                 for(CodeCharacter cc : data) {
                     Platform.runLater(() -> myJob.getReporter().accept(cc));
+                    if(playPhonetic.get()) { playPhonetic(cc); }
                     for(CodeParticle particle : cc.particles) {
                         if(cancelPlayback) { break; }
                         playCodeElement(particle,bb);
@@ -128,11 +126,12 @@ public class PlayerThread extends Thread {
 
             } catch (InterruptedException e) {
                 quit = true;
-            } catch (UnsupportedAudioFileException e) {
+            } catch (LineUnavailableException e) {
                 e.printStackTrace();
+                quit = true;
             } catch (IOException e) {
                 e.printStackTrace();
-            } catch (LineUnavailableException e) {
+            } catch (UnsupportedAudioFileException e) {
                 e.printStackTrace();
             }
         } // while(!quit)

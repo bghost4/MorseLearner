@@ -1,7 +1,11 @@
 package com.derpderphurr.morse;
 
-import javafx.util.Pair;
-
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -62,6 +66,48 @@ public class Codec {
         //Punctuation stolen from: https://www.electronics-notes.com/articles/ham_radio/morse_code/characters-table-chart.php
     }
 
+    private static final Map<Character,String> phonetics = new HashMap<>();
+    static {
+        phonetics.put('a',"/phonetic/a.wav");
+        phonetics.put('b',"/phonetic/b.wav");
+        phonetics.put('c',"/phonetic/c.wav");
+        phonetics.put('d',"/phonetic/d.wav");
+        phonetics.put('e',"/phonetic/e.wav");
+        phonetics.put('f',"/phonetic/f.wav");
+        phonetics.put('g',"/phonetic/g.wav");
+        phonetics.put('h',"/phonetic/h.wav");
+        phonetics.put('i',"/phonetic/i.wav");
+        phonetics.put('j',"/phonetic/j.wav");
+        phonetics.put('k',"/phonetic/k.wav");
+        phonetics.put('l',"/phonetic/l.wav");
+        phonetics.put('m',"/phonetic/m.wav");
+        phonetics.put('n',"/phonetic/n.wav");
+        phonetics.put('o',"/phonetic/o.wav");
+        phonetics.put('p',"/phonetic/p.wav");
+        phonetics.put('q',"/phonetic/q.wav");
+        phonetics.put('r',"/phonetic/r.wav");
+        phonetics.put('s',"/phonetic/s.wav");
+        phonetics.put('t',"/phonetic/t.wav");
+        phonetics.put('u',"/phonetic/u.wav");
+        phonetics.put('v',"/phonetic/v.wav");
+        phonetics.put('w',"/phonetic/w.wav");
+        phonetics.put('x',"/phonetic/x.wav");
+        phonetics.put('y',"/phonetic/y.wav");
+        phonetics.put('z',"/phonetic/z.wav");
+    }
+
+    public static Optional<AudioInputStream> getPhoneticInputStream(CodeCharacter cc) throws IOException, UnsupportedAudioFileException {
+        if (cc.getCha().length() == 1) {
+            if (phonetics.containsKey(cc.cha.toCharArray()[0])) {
+                InputStream clipStream = Codec.class.getResourceAsStream(phonetics.get(cc.cha.toCharArray()[0]));
+                if(clipStream != null) {
+                    return Optional.of(AudioSystem.getAudioInputStream(new BufferedInputStream(clipStream)));
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
     private static Stream<CodeParticle> translateDitDah(char c) {
         if( c == '.' ) {
             return Stream.of(new CodeParticle(CodeParticle.Type.MARK,1));
@@ -69,7 +115,7 @@ public class Codec {
             return Stream.of(new CodeParticle(CodeParticle.Type.MARK,3));
         } else {
             //any char other than . or - is considered a space
-            System.err.println(String.format("Unknown code char: \"%c\"",c));
+            //System.err.println("Unknown code char: \"%c\"%n",c);
             return Stream.of(new CodeParticle(CodeParticle.Type.SPACE,4));
         }
     }
@@ -85,7 +131,7 @@ public class Codec {
                                         Stream.concat(ce, Stream.of(new CodeParticle(CodeParticle.Type.SPACE, 1))//add an extra space of 1 unit time, between the symbols
                                         )
                                 ),
-                        Stream.of(new CodeParticle(CodeParticle.Type.SPACE, 2)) //add 2 additional units to the end of the last char, making the distance between char 3 uints long
+                        Stream.of(new CodeParticle(CodeParticle.Type.SPACE, 2)) //add 2 additional units to the end of the last char, making the distance between char 3 units long
                 ).collect(Collectors.toList())
         );
     }
@@ -100,13 +146,13 @@ public class Codec {
                 .toLowerCase(Locale.ROOT)   //everything to lowercase
                 .replaceAll(" +"," ")
                 )   //replace multiple spaces with a single space
-                .map(c -> translateCharacter(c)) //translate character into mark space stream
+                .map(Codec::translateCharacter) //translate character into mark space stream
                 .collect(Collectors.toList());  // return a list of the mark,space elements
     }
 
 
-    public static int WPMTimeUnitToNumSamples(int wpm,int samplerate) {
-        return (int)(1/(((double)wpm*50.0)/60.0/(double)samplerate));
+    public static int WPMTimeUnitToNumSamples(int wpm,int sampleRate) {
+        return (int)(1/(((double)wpm*50.0)/60.0/(double)sampleRate));
     }
 
     public static int timeUnitsToNumSamples(int timeUnits,int wpm, int sampleRate) {

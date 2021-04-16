@@ -18,14 +18,12 @@ public class PlayerThread extends Thread {
     private final SimpleIntegerProperty tone = new SimpleIntegerProperty(660);
     private final SimpleDoubleProperty volume = new SimpleDoubleProperty(4096); //probably should rescale this to the bounds of a short
     private final SimpleBooleanProperty isRunning = new SimpleBooleanProperty(false);
-    private final SimpleBooleanProperty playPhonetic = new SimpleBooleanProperty(true);
 
     public IntegerProperty wpmProperty() { return wpm; }
     public IntegerProperty toneProperty() { return tone; }
     public DoubleProperty volumeProperty() { return volume; }
     public ReadOnlyBooleanProperty isRunningProperty() { return isRunning; }
     public ReadOnlyBooleanProperty isPlayingProperty() { return playing; }
-    public BooleanProperty playPhoneticProperty() { return playPhonetic;}
 
     private SourceDataLine line;
     private static final int sampleRate = 44100;
@@ -147,7 +145,6 @@ public class PlayerThread extends Thread {
                     case CODE -> playCodeList(myJob,bb);
                     case SAMPLES -> playSample(myJob.getSampleData());
                 }
-
 
                 Platform.runLater(myJob.getOnFinished());
 

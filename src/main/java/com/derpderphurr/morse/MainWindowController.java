@@ -1,6 +1,5 @@
 package com.derpderphurr.morse;
 
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -10,7 +9,6 @@ import javafx.scene.layout.VBox;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.function.Consumer;
 
 public class MainWindowController extends VBox {
 
@@ -61,7 +59,7 @@ public class MainWindowController extends VBox {
     @FXML
     private void playText(ActionEvent e) {
         txtPlayRender.clear();
-        player.queueMessage(new PlayJob(txtPlayText.getText(),() -> {}, (cc) -> txtPlayRender.appendText(cc.getCha())));
+        player.queueMessage(new Playable(txtPlayText.getText(),() -> {}, (cc) -> txtPlayRender.appendText(cc.getCha())));
     }
 
     public void shutdown() { player.shutdown(); }
@@ -92,7 +90,7 @@ public class MainWindowController extends VBox {
         Object obj = event.getSource();
         if(obj instanceof Button) {
             String str = ((Button)obj).getText();
-            player.queueMessage(new PlayJob(str));
+            player.queueMessage(new Playable(str));
         }
     }
 

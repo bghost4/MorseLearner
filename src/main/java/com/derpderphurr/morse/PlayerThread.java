@@ -4,10 +4,7 @@ import javafx.application.Platform;
 import javafx.beans.property.*;
 
 import javax.sound.sampled.*;
-import javax.xml.transform.Source;
-import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.*;
@@ -42,7 +39,7 @@ public class PlayerThread extends Thread {
         cancelPlayback = true;
     }
 
-    public void queueMessage(PlayJob p) {
+    public void queueMessage(Playable p) {
         try {
             queue.offer(p,30, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
@@ -54,7 +51,7 @@ public class PlayerThread extends Thread {
         quit = true;
     }
 
-    private final ArrayBlockingQueue<PlayJob> queue = new ArrayBlockingQueue<>(20);
+    private final ArrayBlockingQueue<Playable> queue = new ArrayBlockingQueue<>(20);
     private final ArrayBlockingQueue<Character> phonetic = new ArrayBlockingQueue<>(5);
 
     private void playCodeElement(CodeParticle thisElement, ByteBuffer bb) {
@@ -70,6 +67,22 @@ public class PlayerThread extends Thread {
             }
             line.write(bb.array(), 0, bb.limit());
             bb.rewind();
+        }
+    }
+
+    private void playSample(AudioInputStream ais) {
+        int nBytesRead = 0;
+        byte[] abData = new byte[(int)ais.getFormat().getSampleRate()];
+        while (nBytesRead != -1) {
+            try {
+                nBytesRead = ais.read(abData, 0, abData.length);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (nBytesRead >= 0) {
+                @SuppressWarnings("unused")
+                int nBytesWritten = line.write(abData, 0, nBytesRead);
+            }
         }
     }
 
@@ -92,6 +105,21 @@ public class PlayerThread extends Thread {
         });
     }
 
+    private void playCodeList(Playable myJob,ByteBuffer bb) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
+        var data = Codec.translateString(myJob.getMessage());
+        for(CodeCharacter cc : data) {
+            Platform.runLater(() -> myJob.getReporter().accept(cc));
+            //if(playPhonetic.get()) { playPhonetic(cc); }
+            for(CodeParticle particle : cc.particles) {
+                if(cancelPlayback) { break; }
+                playCodeElement(particle,bb);
+            }
+            if(cancelPlayback) { break; }
+        }
+
+    }
+
+
     public void queuePhonetic(char c) {
         phonetic.add(c);
     }
@@ -110,22 +138,16 @@ public class PlayerThread extends Thread {
         while (!quit) {
             try {
                 if( queue.isEmpty() ) { cancelPlayback = false; }
-                PlayJob myJob = queue.take();
-
-                var data = Codec.translateString(myJob.getMessage());
+                Playable myJob = queue.take();
 
                 ByteBuffer bb = ByteBuffer.allocate(2); //Allocate buffer up here to keep it from re-allocating in loop
                 bb.order(ByteOrder.LITTLE_ENDIAN);
 
-                for(CodeCharacter cc : data) {
-                    Platform.runLater(() -> myJob.getReporter().accept(cc));
-                    if(playPhonetic.get()) { playPhonetic(cc); }
-                    for(CodeParticle particle : cc.particles) {
-                        if(cancelPlayback) { break; }
-                        playCodeElement(particle,bb);
-                    }
-                    if(cancelPlayback) { break; }
+                switch(myJob.type) {
+                    case CODE -> playCodeList(myJob,bb);
+                    case SAMPLES -> playSample(myJob.getSampleData());
                 }
+
 
                 Platform.runLater(myJob.getOnFinished());
 

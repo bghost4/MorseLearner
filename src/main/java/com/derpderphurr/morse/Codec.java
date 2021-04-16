@@ -96,6 +96,14 @@ public class Codec {
         phonetics.put('z',"/phonetic/z.wav");
     }
 
+    public static Optional<AudioInputStream> getPhoneticInputStream(Character c) throws IOException, UnsupportedAudioFileException {
+        if(phonetics.containsKey(c)) {
+            return Optional.of(AudioSystem.getAudioInputStream(new BufferedInputStream(Codec.class.getResourceAsStream(phonetics.get(c)))));
+        } else {
+            return Optional.empty();
+        }
+    }
+
     public static Optional<AudioInputStream> getPhoneticInputStream(CodeCharacter cc) throws IOException, UnsupportedAudioFileException {
         if (cc.getCha().length() == 1) {
             if (phonetics.containsKey(cc.cha.toCharArray()[0])) {

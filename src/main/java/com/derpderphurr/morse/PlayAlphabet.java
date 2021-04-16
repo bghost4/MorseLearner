@@ -1,5 +1,11 @@
 package com.derpderphurr.morse;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class PlayAlphabet extends Thread {
@@ -14,11 +20,17 @@ public class PlayAlphabet extends Thread {
     public void run() {
         var alphabet = Codec.phonetics.keySet().stream().sorted().collect(Collectors.toList());
 
-        player.playPhoneticProperty().set(true);
-
         for(Character c : alphabet) {
-            String sc = new String(""+c);
-            player.queueMessage(new PlayJob(sc));
+            try {
+                Optional<AudioInputStream> oais = Codec.getPhoneticInputStream(c);
+                oais.ifPresent((ais) -> player.queueMessage(new Playable(ais)) );
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (UnsupportedAudioFileException e) {
+                e.printStackTrace();
+            }
+
+            player.queueMessage(new Playable(String.format("%c   %c   %c   %c",c,c,c,c)));
         }
 
     }

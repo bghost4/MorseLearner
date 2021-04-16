@@ -4,6 +4,10 @@ import javafx.application.Platform;
 import javafx.beans.property.*;
 
 import javax.sound.sampled.*;
+import javax.xml.transform.Source;
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.concurrent.ArrayBlockingQueue;
 
@@ -41,6 +45,7 @@ public class PlayerThread extends Thread {
     }
 
     private final ArrayBlockingQueue<PlayJob> queue = new ArrayBlockingQueue<>(20);
+    private final ArrayBlockingQueue<Character> phonetic = new ArrayBlockingQueue<>(5);
 
     private void playCodeElement(CodeParticle thisElement, ByteBuffer bb) {
         int numSamples = Codec.timeUnitsToNumSamples(thisElement.units, wpm.get(), sampleRate);
@@ -58,6 +63,39 @@ public class PlayerThread extends Thread {
         }
     }
 
+    private void playPhonetic(char c) throws IOException, UnsupportedAudioFileException, LineUnavailableException {
+        //Load Phonetic as Clip
+        InputStream clipStream = this.getClass().getResourceAsStream("/phonetic/a.wav");
+        if(clipStream == null) {
+            System.err.println("unable to load reasource");
+        }
+        AudioInputStream ais = AudioSystem.getAudioInputStream(new BufferedInputStream(clipStream));
+        SourceDataLine clipLine = AudioSystem.getSourceDataLine(ais.getFormat());
+        clipLine.open(ais.getFormat());
+        clipLine.start();
+
+        int nBytesRead = 0;
+        byte[] abData = new byte[(int)ais.getFormat().getSampleRate()];
+        while (nBytesRead != -1) {
+            try {
+                nBytesRead = ais.read(abData, 0, abData.length);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (nBytesRead >= 0) {
+                @SuppressWarnings("unused")
+                int nBytesWritten = clipLine.write(abData, 0, nBytesRead);
+            }
+        }
+
+        clipLine.drain();
+        clipLine.close();
+    }
+
+    public void queuePhonetic(char c) {
+        phonetic.add(c);
+    }
+
     @Override
     public void run() {
         try {
@@ -73,6 +111,9 @@ public class PlayerThread extends Thread {
             try {
                 if( queue.isEmpty() ) { cancelPlayback = false; }
                 PlayJob myJob = queue.take();
+
+                playPhonetic('a');
+
                 var data = Codec.translateString(myJob.getMessage());
 
                 ByteBuffer bb = ByteBuffer.allocate(2); //Allocate buffer up here to keep it from re-allocating in loop
@@ -90,6 +131,12 @@ public class PlayerThread extends Thread {
 
             } catch (InterruptedException e) {
                 quit = true;
+            } catch (UnsupportedAudioFileException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (LineUnavailableException e) {
+                e.printStackTrace();
             }
         } // while(!quit)
         Platform.runLater(() -> isRunning.set(false));

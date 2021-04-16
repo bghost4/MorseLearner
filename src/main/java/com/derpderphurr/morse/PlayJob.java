@@ -8,7 +8,6 @@ public class PlayJob {
     private final Runnable onFinished;
     private final Consumer<CodeCharacter> reporter;
 
-
     public PlayJob(String message, Runnable onFinished, Consumer<CodeCharacter> reporter) {
         this.message = message;
         this.onFinished = onFinished;

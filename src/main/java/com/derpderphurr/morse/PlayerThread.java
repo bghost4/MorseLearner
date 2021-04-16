@@ -9,6 +9,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.concurrent.ArrayBlockingQueue;
 
 public class PlayerThread extends Thread {
@@ -27,7 +28,7 @@ public class PlayerThread extends Thread {
 
     private SourceDataLine line;
     private final int sampleRate = 44100;
-    private final AudioFormat defaultAudioFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, sampleRate, 16, 1, 2, sampleRate, true);
+    private final AudioFormat defaultAudioFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, sampleRate, 16, 1, 2, sampleRate, false);
 
     private boolean quit = false;
     private boolean cancelPlayback = false;
@@ -70,9 +71,6 @@ public class PlayerThread extends Thread {
             System.err.println("unable to load reasource");
         }
         AudioInputStream ais = AudioSystem.getAudioInputStream(new BufferedInputStream(clipStream));
-        SourceDataLine clipLine = AudioSystem.getSourceDataLine(ais.getFormat());
-        clipLine.open(ais.getFormat());
-        clipLine.start();
 
         int nBytesRead = 0;
         byte[] abData = new byte[(int)ais.getFormat().getSampleRate()];
@@ -84,12 +82,10 @@ public class PlayerThread extends Thread {
             }
             if (nBytesRead >= 0) {
                 @SuppressWarnings("unused")
-                int nBytesWritten = clipLine.write(abData, 0, nBytesRead);
+                int nBytesWritten = line.write(abData, 0, nBytesRead);
             }
         }
 
-        clipLine.drain();
-        clipLine.close();
     }
 
     public void queuePhonetic(char c) {
@@ -117,6 +113,7 @@ public class PlayerThread extends Thread {
                 var data = Codec.translateString(myJob.getMessage());
 
                 ByteBuffer bb = ByteBuffer.allocate(2); //Allocate buffer up here to keep it from re-allocating in loop
+                bb.order(ByteOrder.LITTLE_ENDIAN);
 
                 for(CodeCharacter cc : data) {
                     Platform.runLater(() -> myJob.getReporter().accept(cc));
@@ -126,6 +123,7 @@ public class PlayerThread extends Thread {
                     }
                     if(cancelPlayback) { break; }
                 }
+
 
                 Platform.runLater(myJob.getOnFinished());
 

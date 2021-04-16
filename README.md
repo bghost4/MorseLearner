@@ -1,5 +1,5 @@
 # MorseLearner
-A program to help you lear Morse code without looking at dots and dashes
+A program to help you learn Morse code without looking at dots and dashes
 
 Java 14 and Gradle 7 required
 

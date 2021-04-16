@@ -45,6 +45,7 @@ public class MainWindowController extends VBox {
         sb.append("JavaFX <https://openjfx.io/>\n");
         sb.append("Gradle <https://gradle.org/>\n\n");
         sb.append("Special Thanks goes out to user tim.kahn @ freesound.org for creating Phonetic Alphabet\n");
+        sb.append("Special Thanks to Amy Gedgaudas for providing their voice");
         sb.append("\t<https://freesound.org/people/tim.kahn/packs/14153/>");
         a.setContentText(sb.toString());
 

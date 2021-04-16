@@ -1,5 +1,6 @@
 package com.derpderphurr.morse;
 
+import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
@@ -126,7 +127,7 @@ public class PlayerService extends Service<Void> {
                         ByteBuffer bb = ByteBuffer.allocate(2); //Allocate buffer up here to keep it from re-allocating in loop
 
                         for(CodeCharacter cc : data) {
-                            reporter.accept(cc);
+                            Platform.runLater(() -> reporter.accept(cc) );
                             for(CodeParticle particle : cc.particles) {
                                 playCodeElement(particle,bb);
                             }
@@ -143,5 +144,6 @@ public class PlayerService extends Service<Void> {
         line.stop();
         quit = true;
         System.err.println("Quitting Task");
+
     }
 }

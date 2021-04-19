@@ -1,5 +1,9 @@
 package com.derpderphurr.morse;
 
+import com.derpderphurr.morse.tabs.LetterPractice;
+import com.derpderphurr.morse.tabs.PlayText;
+import com.derpderphurr.morse.tabs.SendingBasics;
+import com.derpderphurr.morse.tabs.TheBasics;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -27,10 +31,16 @@ public class MainWindowController extends VBox {
     }
 
     @FXML
-    private void playAlphabet(ActionEvent e) {
-        PlayAlphabet t = new PlayAlphabet(player);
-        t.start();
-    }
+    TheBasics tBasics;
+
+    @FXML
+    PlayText tPlayText;
+
+    @FXML
+    LetterPractice tPracticeLetters;
+
+    @FXML
+    SendingBasics tSendingBasics;
 
     @FXML
     private void onAbout(ActionEvent e) {
@@ -49,25 +59,11 @@ public class MainWindowController extends VBox {
         a.showAndWait();
     }
 
-    @FXML
-    private void clearPlayText(ActionEvent e) {
-        txtPlayRender.clear();
-        txtPlayText.clear();
-    }
 
-    @FXML
-    private void playText(ActionEvent e) {
-        txtPlayRender.clear();
-        player.queueMessage(new Playable(txtPlayText.getText(),() -> {}, (cc) -> txtPlayRender.appendText(cc.getCha())));
-    }
 
     public void shutdown() { player.shutdown(); }
 
-    @FXML
-    private TextArea txtPlayText;
 
-    @FXML
-    private TextArea txtPlayRender;
 
     @FXML
     private ResourceBundle resources;
@@ -83,15 +79,6 @@ public class MainWindowController extends VBox {
 
     @FXML
     private Slider sldVolume;
-
-    @FXML
-    void onLearnButton(ActionEvent event) {
-        Object obj = event.getSource();
-        if(obj instanceof Button) {
-            String str = ((Button)obj).getText();
-            player.queueMessage(new Playable(str));
-        }
-    }
 
     @FXML
     void initialize() {
@@ -125,7 +112,10 @@ public class MainWindowController extends VBox {
             }
         });
 
-
+        tBasics.setPlayer(player);
+        tPlayText.setPlayer(player);
+        tPracticeLetters.setPlayer(player);
+        tSendingBasics.setPlayer(player);
 
     }
 

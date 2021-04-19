@@ -1,0 +1,6 @@
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.Label?>
+
+<fx:root type="Tab" text="Sending Basics" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+    <Label text="Press CTRL as Straight Key"/>
+</fx:root>

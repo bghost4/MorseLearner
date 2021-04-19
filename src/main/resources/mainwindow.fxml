@@ -4,6 +4,10 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
+<?import com.derpderphurr.morse.tabs.*?>
+
+
+
 <fx:root prefHeight="400.0" prefWidth="640.0" type="VBox" xmlns="http://javafx.com/javafx/11.0.1"
          xmlns:fx="http://javafx.com/fxml/1">
     <MenuBar VBox.vgrow="NEVER">
@@ -58,172 +62,11 @@
         <Slider fx:id="sldVolume" max="32768.0" value="4000.0"/>
     </HBox>
     <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
-        <Tab text="Learn">
-            <GridPane>
-                <columnConstraints>
-                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                </columnConstraints>
-                <rowConstraints>
-                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                </rowConstraints>
-                <Label text="Letters" GridPane.columnSpan="2">
-                    <font>
-                        <Font name="System Bold" size="18.0"/>
-                    </font>
-                </Label>
-                <Button mnemonicParsing="false" onAction="#onLearnButton" text="A" GridPane.rowIndex="1"/>
-                <Button mnemonicParsing="false" onAction="#onLearnButton" text="B" GridPane.columnIndex="1"
-                        GridPane.rowIndex="1"/>
-                <Button mnemonicParsing="false" onAction="#onLearnButton" text="C" GridPane.columnIndex="2"
-                        GridPane.rowIndex="1"/>
-                <Button mnemonicParsing="false" onAction="#onLearnButton" text="D" GridPane.columnIndex="3"
-                        GridPane.rowIndex="1"/>
-                <Button mnemonicParsing="false" onAction="#onLearnButton" text="E" GridPane.columnIndex="4"
-                        GridPane.rowIndex="1"/>
-                <Button mnemonicParsing="false" onAction="#onLearnButton" text="F" GridPane.columnIndex="5"
-                        GridPane.rowIndex="1"/>
-                <Button mnemonicParsing="false" onAction="#onLearnButton" text="G" GridPane.columnIndex="6"
-                        GridPane.rowIndex="1"/>
-                <Button mnemonicParsing="false" onAction="#onLearnButton" text="H" GridPane.columnIndex="7"
-                        GridPane.rowIndex="1"/>
-                <Button mnemonicParsing="false" onAction="#onLearnButton" text="I" GridPane.columnIndex="8"
-                        GridPane.rowIndex="1"/>
-                <Button mnemonicParsing="false" onAction="#onLearnButton" text="J" GridPane.rowIndex="2"/>
-                <Button mnemonicParsing="false" onAction="#onLearnButton" text="K" GridPane.columnIndex="1"
-                        GridPane.rowIndex="2"/>
-                <Button mnemonicParsing="false" onAction="#onLearnButton" text="L" GridPane.columnIndex="2"
-                        GridPane.rowIndex="2"/>
-                <Button mnemonicParsing="false" onAction="#onLearnButton" text="M" GridPane.columnIndex="3"
-                        GridPane.rowIndex="2"/>
-                <Button mnemonicParsing="false" onAction="#onLearnButton" text="N" GridPane.columnIndex="4"
-                        GridPane.rowIndex="2"/>
-                <Button mnemonicParsing="false" onAction="#onLearnButton" text="O" GridPane.columnIndex="5"
-                        GridPane.rowIndex="2"/>
-                <Button mnemonicParsing="false" onAction="#onLearnButton" text="P" GridPane.columnIndex="6"
-                        GridPane.rowIndex="2"/>
-                <Button mnemonicParsing="false" onAction="#onLearnButton" text="Q" GridPane.columnIndex="7"
-                        GridPane.rowIndex="2"/>
-                <Button mnemonicParsing="false" onAction="#onLearnButton" text="R" GridPane.columnIndex="8"
-                        GridPane.rowIndex="2"/>
-                <Button mnemonicParsing="false" onAction="#onLearnButton" text="S" GridPane.rowIndex="3"/>
-                <Button mnemonicParsing="false" onAction="#onLearnButton" text="T" GridPane.columnIndex="1"
-                        GridPane.rowIndex="3"/>
-                <Button mnemonicParsing="false" onAction="#onLearnButton" text="U" GridPane.columnIndex="2"
-                        GridPane.rowIndex="3"/>
-                <Button mnemonicParsing="false" onAction="#onLearnButton" text="V" GridPane.columnIndex="3"
-                        GridPane.rowIndex="3"/>
-                <Button mnemonicParsing="false" onAction="#onLearnButton" text="W" GridPane.columnIndex="4"
-                        GridPane.rowIndex="3"/>
-                <Button mnemonicParsing="false" onAction="#onLearnButton" text="X" GridPane.columnIndex="5"
-                        GridPane.rowIndex="3"/>
-                <Button mnemonicParsing="false" onAction="#onLearnButton" text="Y" GridPane.columnIndex="6"
-                        GridPane.rowIndex="3"/>
-                <Button mnemonicParsing="false" onAction="#onLearnButton" text="Z" GridPane.columnIndex="7"
-                        GridPane.rowIndex="3"/>
 
-                <Label text="Numbers" GridPane.columnSpan="2" GridPane.rowIndex="4">
-                    <font>
-                        <Font name="System Bold" size="18.0"/>
-                    </font>
-                </Label>
-                <Button mnemonicParsing="false" onAction="#onLearnButton" text="1" GridPane.rowIndex="5"/>
-                <Button mnemonicParsing="false" onAction="#onLearnButton" text="2" GridPane.columnIndex="1"
-                        GridPane.rowIndex="5"/>
-                <Button mnemonicParsing="false" onAction="#onLearnButton" text="3" GridPane.columnIndex="2"
-                        GridPane.rowIndex="5"/>
-                <Button mnemonicParsing="false" onAction="#onLearnButton" text="4" GridPane.columnIndex="3"
-                        GridPane.rowIndex="5"/>
-                <Button mnemonicParsing="false" onAction="#onLearnButton" text="5" GridPane.columnIndex="4"
-                        GridPane.rowIndex="5"/>
-                <Button mnemonicParsing="false" onAction="#onLearnButton" text="6" GridPane.columnIndex="5"
-                        GridPane.rowIndex="5"/>
-                <Button mnemonicParsing="false" onAction="#onLearnButton" text="7" GridPane.columnIndex="6"
-                        GridPane.rowIndex="5"/>
-                <Button mnemonicParsing="false" onAction="#onLearnButton" text="8" GridPane.columnIndex="7"
-                        GridPane.rowIndex="5"/>
-                <Button mnemonicParsing="false" onAction="#onLearnButton" text="9" GridPane.columnIndex="8"
-                        GridPane.rowIndex="5"/>
-                <Button mnemonicParsing="false" onAction="#onLearnButton" text="0" GridPane.columnIndex="0"
-                        GridPane.rowIndex="6"/>
+        <TheBasics fx:id="tBasics"/>
+        <PlayText fx:id="tPlayText"/>
+        <LetterPractice fx:id="tPracticeLetters"/>
+        <SendingBasics fx:id="tSendingBasics"/>
 
-                <Label text="Punctuation" GridPane.columnSpan="2" GridPane.rowIndex="7">
-                    <font>
-                        <Font name="System Bold" size="18.0"/>
-                    </font>
-                </Label>
-            </GridPane>
-        </Tab>
-
-        <Tab text="Rcv Letters">
-            <Label text="Not Implemented">
-                <Font name="System Bold" size="18.0"/>
-            </Label>
-        </Tab>
-
-        <Tab text="Rcv Words">
-            <Label text="Not Implemented">
-                <Font name="System Bold" size="18.0"/>
-            </Label>
-        </Tab>
-
-        <Tab text="Rcv Messages">
-            <Label text="Not Implemented">
-                <Font name="System Bold" size="18.0"/>
-            </Label>
-        </Tab>
-
-        <Tab text="Send Letters">
-            <Label text="Not Implemented">
-                <Font name="System Bold" size="18.0"/>
-            </Label>
-        </Tab>
-
-        <Tab text="Send Words">
-            <Label text="Not Implemented">
-                <Font name="System Bold" size="18.0"/>
-            </Label>
-        </Tab>
-
-        <Tab text="Relay Message">
-            <Label text="Not Implemented">
-                <Font name="System Bold" size="18.0"/>
-            </Label>
-        </Tab>
-
-        <Tab text="Practice Timing">
-            <Label text="Not Implemented">
-                <Font name="System Bold" size="18.0"/>
-            </Label>
-        </Tab>
-
-        <Tab text="Play Text">
-            <VBox>
-                <Label/>
-                <TextArea fx:id="txtPlayText" promptText="Input Text to play" VBox.vgrow="ALWAYS"
-                          wrapText="true"/>
-                <TextArea fx:id="txtPlayRender" VBox.vgrow="ALWAYS" editable="false" wrapText="true"/>
-                <HBox>
-                    <Button mnemonicParsing="false" text="play" onAction="#playText"/>
-                    <Button mnemonicParsing="false" text="Clear" onAction="#clearPlayText"/>
-                    <Button mnemonicParsing="false" text="play Alphabet" onAction="#playAlphabet"/>
-                </HBox>
-            </VBox>
-        </Tab>
     </TabPane>
 </fx:root>

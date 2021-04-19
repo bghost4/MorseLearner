@@ -1,0 +1,20 @@
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Tab?>
+
+<fx:root type="Tab" text="Play Text" xmlns="http://javafx.com/javafx/11.0.1"
+         xmlns:fx="http://javafx.com/fxml/1">
+    <VBox>
+        <Label/>
+        <TextArea fx:id="txtPlayText" promptText="Input Text to play" VBox.vgrow="ALWAYS"
+                  wrapText="true"/>
+        <TextArea fx:id="txtPlayRender" VBox.vgrow="ALWAYS" editable="false" wrapText="true"/>
+        <HBox>
+            <Button mnemonicParsing="false" text="play" onAction="#playText"/>
+            <Button mnemonicParsing="false" text="Clear" onAction="#clearPlayText"/>
+        </HBox>
+    </VBox>
+</fx:root>

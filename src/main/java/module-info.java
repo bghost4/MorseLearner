@@ -8,5 +8,7 @@ module MorseLearner.app {
     opens com.derpderphurr.morse.tabs to javafx.fxml;
 
     exports com.derpderphurr.morse;
+    exports com.derpderphurr.morse.exercise;
+    opens com.derpderphurr.morse.exercise to javafx.fxml;
 
 }

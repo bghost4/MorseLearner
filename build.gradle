@@ -1,29 +1,35 @@
-import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
+//import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 
 plugins {
     id 'java'
     id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.10'
 }
 
 group 'com.derpderphurr'
 version '1.0-SNAPSHOT'
 
-targetCompatibility = JavaVersion.VERSION_14
-sourceCompatibility = JavaVersion.VERSION_14
+targetCompatibility = JavaVersion.VERSION_17
+sourceCompatibility = JavaVersion.VERSION_17
 
-def currentOS = DefaultNativePlatform.currentOperatingSystem
-def platform
-if (currentOS.isWindows()) {
-    platform = 'win'
-} else if (currentOS.isLinux()) {
-    platform = 'linux'
-} else if (currentOS.isMacOsX()) {
-    platform = 'mac'
-}
+//def currentOS = DefaultNativePlatform.currentOperatingSystem
+//def platform
+//if (currentOS.isWindows()) {
+//    platform = 'win'
+//} else if (currentOS.isLinux()) {
+//    platform = 'linux'
+//} else if (currentOS.isMacOsX()) {
+//    platform = 'mac'
+//}
 
 application {
     mainModule = "MorseLearner.app"
     mainClass = 'com.derpderphurr.morse.Launcher'
+}
+
+javafx {
+    version = '17'
+    modules = ['javafx.controls','javafx.fxml']
 }
 
 java {
@@ -35,10 +41,7 @@ repositories {
 }
 
 dependencies {
-    implementation "org.openjfx:javafx-base:15.0.1:${platform}"
-    implementation "org.openjfx:javafx-controls:15.0.1:${platform}"
-    implementation "org.openjfx:javafx-graphics:15.0.1:${platform}"
-    implementation "org.openjfx:javafx-fxml:15.0.1:${platform}"
+    implementation "net.java.jinput:jinput:2.0.9"
 }
 
 test {

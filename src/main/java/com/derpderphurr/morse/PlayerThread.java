@@ -38,6 +38,8 @@ public class PlayerThread extends Thread {
     private boolean quit = false;
     private boolean cancelPlayback = false;
 
+    private final ArrayBlockingQueue<Playable> queue = new ArrayBlockingQueue<>(20);
+
     public void cancelPlayback() {
         cancelPlayback = true;
     }
@@ -59,8 +61,6 @@ public class PlayerThread extends Thread {
     public void shutdown() {
         quit = true;
     }
-
-    private final ArrayBlockingQueue<Playable> queue = new ArrayBlockingQueue<>(20);
 
     private void insertCodeElement(CodeParticle thisElement, ByteBuffer bb) {
         int numSamples = Codec.timeUnitsToNumSamples(thisElement.units, wpm.get(), sampleRate);
@@ -109,7 +109,6 @@ public class PlayerThread extends Thread {
     private void playCodeList(Playable myJob,ByteBuffer bb) {
         var data = Codec.translateString(myJob.getMessage());
         for(CodeCharacter cc : data) {
-
             //if(playPhonetic.get()) { playPhonetic(cc); }
             for(CodeParticle particle : cc.particles) {
                 if(cancelPlayback) { break; }
@@ -117,7 +116,6 @@ public class PlayerThread extends Thread {
                 line.write(bb.array(),0,bb.position());
                 bb.rewind();
             }
-
             Platform.runLater(() -> myJob.getReporter().accept(cc));
             if(cancelPlayback) { break; }
         }
@@ -152,24 +150,12 @@ public class PlayerThread extends Thread {
             line.open(defaultAudioFormat);
             line.start();
             Platform.runLater(() -> isRunning.set(true));
-
         } catch (LineUnavailableException e) {
             quit = true;
         }
 
         while (!quit) {
             try {
-                if (oscillatorMode.get()) {
-
-                    evalOscillatorMode(bb);
-
-                } else {
-
-                    if (queue.isEmpty()) {
-                        cancelPlayback = false;
-                        continue;
-                    }
-
                     Playable myJob = queue.take();
                     switch (myJob.type) {
                         case CODE -> playCodeList(myJob, bb);
@@ -177,14 +163,11 @@ public class PlayerThread extends Thread {
                     }
                     Platform.runLater(myJob.getOnFinished());
 
-
-                } // while(!quit)
-                Platform.runLater(() -> isRunning.set(false));
-
             } catch (InterruptedException e) {
                 quit = true;
             }
-        }
+        } // while !quit
+        Platform.runLater(() -> isRunning.set(false));
         line.stop();
     }
 }

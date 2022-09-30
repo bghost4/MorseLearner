@@ -10,6 +10,7 @@ import com.derpderphurr.morse.PlayerThread;
 import com.derpderphurr.morse.exercise.EchoExercise;
 import com.derpderphurr.morse.exercise.Exercise;
 import com.derpderphurr.morse.exercise.Question;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -40,6 +41,8 @@ public class LetterPractice extends Tab {
 
     private PlayerThread player;
 
+    private Question<String,String> currentQuestion;
+
     public LetterPractice() {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/LetterPractice.fxml"));
         loader.setRoot(this);
@@ -53,21 +56,36 @@ public class LetterPractice extends Tab {
     }
 
     private void begin(ActionEvent actionEvent) {
+        tfBody.getChildren().clear();
         if(cboSelect.getValue() != null) {
-            Question<String, String> q = cboSelect.getValue().getQuestion();
+            currentQuestion = cboSelect.getValue().getQuestion();
             this.getTabPane().getScene().setOnKeyPressed(ke -> {
                 System.out.println("Got Key Text: "+ke.getText());
                 Text input = new Text(ke.getText());
                 input.setFont(Font.font("Verdana",25));
-                if(!ke.getText().equals(q.answer())) {
+                if(!ke.getText().equals(currentQuestion.answer())) {
                     input.setFill(Color.RED);
-                    player.queueMessage(new Playable(q.challenge()));
+                    tfBody.getChildren().add(input);
+                    player.queueMessage(new Playable(currentQuestion.challenge()));
                 } else {
                     input.setFill(Color.GREEN);
+                    tfBody.getChildren().add(input);
+
+                    //for some reason this causes a 2 second delay, then shows the letter and immediatly plays the sound.
+                    Platform.runLater(() -> {
+                        currentQuestion = cboSelect.getValue().getQuestion();
+                        try {
+                            Thread.sleep(2000); // Wait 2 seconds before sending the next letter
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        player.queueMessage(new Playable(currentQuestion.challenge()));
+                    });
+
                 }
-                tfBody.getChildren().add(input);
             });
-            player.queueMessage(new Playable(q.challenge()));
+
+            player.queueMessage(new Playable(currentQuestion.challenge()));
         }
     }
 
@@ -84,8 +102,6 @@ public class LetterPractice extends Tab {
         assert cboSelect != null : "fx:id=\"cboSelect\" was not injected: check your FXML file 'LetterPractice.fxml'.";
         assert btnGo != null : "fx:id=\"btnGo\" was not injected: check your FXML file 'LetterPractice.fxml'.";
         assert tfBody != null : "fx:id=\"tfBody\" was not injected: check your FXML file 'LetterPractice.fxml'.";
-
-
 
         List<Question<String,String>> anteos_pool = List.of(
             Question.echoQuestion("a"),

@@ -66,15 +66,16 @@ public class PlayerThread extends Thread {
         int numSamples = Codec.timeUnitsToNumSamples(thisElement.units, wpm.get(), sampleRate);
 
         double pre = 2*Math.PI*(1/((double)sampleRate/(double)tone.get()));
-        int fadeFrames = 64;
+        int fadeFrames = 32;
         double workingVolume = Short.MAX_VALUE * volume.get();
         double volumeStep = workingVolume/fadeFrames;
         double tVolume = 0;
 
+
+        //Genereate a sine wave for the number of samples predicted, raise the volume up to target volume for MARK, and reduce volume to zero for space
+        //controlled by fade frames, this keeps the audio from clicking
         for (int i = 0; i < numSamples; i++) {
             double angle = i*pre;
-            //double angle = 2.0 * Math.PI * i / ((double) sampleRate / (double) tone.get());
-            double out = (Math.sin(angle) * workingVolume);
             if (thisElement.type == CodeParticle.Type.SPACE || i > (numSamples-fadeFrames)) {
                 tVolume -= volumeStep;
             } else {
@@ -85,7 +86,6 @@ public class PlayerThread extends Thread {
             } else if(tVolume > workingVolume) {
                 tVolume = workingVolume;
             }
-
             bb.putShort((short)(Math.sin(pre*i)*tVolume));
         }
     }

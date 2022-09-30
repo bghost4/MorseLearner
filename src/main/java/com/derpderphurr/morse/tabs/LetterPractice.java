@@ -59,15 +59,15 @@ public class LetterPractice extends Tab {
                 System.out.println("Got Key Text: "+ke.getText());
                 Text input = new Text(ke.getText());
                 input.setFont(Font.font("Verdana",25));
-                if(!ke.getText().equals(q.getAnswer())) {
+                if(!ke.getText().equals(q.answer())) {
                     input.setFill(Color.RED);
-                    player.queueMessage(new Playable(q.getChallenge()));
+                    player.queueMessage(new Playable(q.challenge()));
                 } else {
                     input.setFill(Color.GREEN);
                 }
                 tfBody.getChildren().add(input);
             });
-            player.queueMessage(new Playable(q.getChallenge()));
+            player.queueMessage(new Playable(q.challenge()));
         }
     }
 
@@ -85,13 +85,15 @@ public class LetterPractice extends Tab {
         assert btnGo != null : "fx:id=\"btnGo\" was not injected: check your FXML file 'LetterPractice.fxml'.";
         assert tfBody != null : "fx:id=\"tfBody\" was not injected: check your FXML file 'LetterPractice.fxml'.";
 
-        List<EchoExercise.EchoQuestion<String>> anteos_pool = List.of(
-            new EchoExercise.EchoQuestion<>("a"),
-            new EchoExercise.EchoQuestion<>("n"),
-            new EchoExercise.EchoQuestion<>("t"),
-            new EchoExercise.EchoQuestion<>("e"),
-            new EchoExercise.EchoQuestion<>("o"),
-            new EchoExercise.EchoQuestion<>("s")
+
+
+        List<Question<String,String>> anteos_pool = List.of(
+            Question.echoQuestion("a"),
+            Question.echoQuestion("n"),
+            Question.echoQuestion("t"),
+            Question.echoQuestion("e"),
+            Question.echoQuestion("o"),
+            Question.echoQuestion("s")
         );
 
         EchoExercise<String> anteos = new EchoExercise<>("ANTEOS",anteos_pool);

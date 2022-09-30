@@ -9,19 +9,13 @@ public class EchoExercise<T> extends AbstractExercise<T,T> {
 
     private final String name;
     private final Random rand;
-    private List<EchoQuestion<T>> pool = new ArrayList<>();
+    private List<Question<T,T>> pool = new ArrayList<>();
 
-    public static class EchoQuestion<T> extends Question<T,T> {
-        public EchoQuestion(T s) {
-            super(s, s);
-        }
-    }
-
-    public EchoExercise(String name, Collection<EchoQuestion<T>> pool) {
+    public EchoExercise(String name, Collection<Question<T,T>> pool) {
         this(name,pool,System.currentTimeMillis());
     }
 
-    public EchoExercise(String name, Collection<EchoQuestion<T>> pool,long seed) {
+    public EchoExercise(String name, Collection<Question<T,T>> pool,long seed) {
         this.pool.addAll(pool);
         this.name = name;
         this.rand = new Random(seed);
@@ -36,4 +30,7 @@ public class EchoExercise<T> extends AbstractExercise<T,T> {
     public String getName() {
         return name;
     }
+
+    @Override
+    public String toString() { return getName(); }
 }

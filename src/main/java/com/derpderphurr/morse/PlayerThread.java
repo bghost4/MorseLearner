@@ -44,7 +44,9 @@ public class PlayerThread extends Thread {
 
     public void queueMessage(Playable p) {
         try {
-            queue.offer(p,30, TimeUnit.SECONDS);
+            if(!cancelPlayback) {
+                queue.offer(p, 30, TimeUnit.SECONDS);
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -68,8 +70,6 @@ public class PlayerThread extends Thread {
         double workingVolume = Short.MAX_VALUE * volume.get();
         double volumeStep = workingVolume/fadeFrames;
         double tVolume = 0;
-
-        System.out.println("Max Volume: "+workingVolume);
 
         for (int i = 0; i < numSamples; i++) {
             double angle = i*pre;
@@ -109,13 +109,15 @@ public class PlayerThread extends Thread {
     private void playCodeList(Playable myJob,ByteBuffer bb) {
         var data = Codec.translateString(myJob.getMessage());
         for(CodeCharacter cc : data) {
-            bb.rewind();
+
             //if(playPhonetic.get()) { playPhonetic(cc); }
             for(CodeParticle particle : cc.particles) {
                 if(cancelPlayback) { break; }
                 insertCodeElement(particle,bb);
+                line.write(bb.array(),0,bb.position());
+                bb.rewind();
             }
-            line.write(bb.array(),0,bb.position());
+
             Platform.runLater(() -> myJob.getReporter().accept(cc));
             if(cancelPlayback) { break; }
         }
@@ -142,7 +144,8 @@ public class PlayerThread extends Thread {
     @Override
     public void run() {
 
-        ByteBuffer bb = ByteBuffer.allocate(sampleRate*5*2); //Allocate buffer up here to keep it from re-allocating in loop
+        //buffer up to 1 second of audio
+        ByteBuffer bb = ByteBuffer.allocate(sampleRate*1*2); //Allocate buffer up here to keep it from re-allocating in loop
         bb.order(ByteOrder.LITTLE_ENDIAN);
         try {
             line = AudioSystem.getSourceDataLine(defaultAudioFormat);
@@ -166,13 +169,12 @@ public class PlayerThread extends Thread {
                         cancelPlayback = false;
                         continue;
                     }
-                    Playable myJob = queue.take();
 
+                    Playable myJob = queue.take();
                     switch (myJob.type) {
                         case CODE -> playCodeList(myJob, bb);
                         case SAMPLES -> playSample(myJob.getSampleData());
                     }
-
                     Platform.runLater(myJob.getOnFinished());
 
 
@@ -181,7 +183,6 @@ public class PlayerThread extends Thread {
 
             } catch (InterruptedException e) {
                 quit = true;
-
             }
         }
         line.stop();

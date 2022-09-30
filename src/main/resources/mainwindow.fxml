@@ -59,7 +59,7 @@
                 <Insets left="25.0"/>
             </HBox.margin>
         </Label>
-        <Slider fx:id="sldVolume" max="32768.0" value="4000.0"/>
+        <Slider fx:id="sldVolume" max="1" value="0.75" />
     </HBox>
     <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
 

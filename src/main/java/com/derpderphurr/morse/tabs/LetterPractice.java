@@ -94,7 +94,7 @@ public class LetterPractice extends Tab {
             new EchoExercise.EchoQuestion<>("s")
         );
 
-        EchoExercise anteos = new EchoExercise("ANTEOS",anteos_pool);
+        EchoExercise<String> anteos = new EchoExercise<>("ANTEOS",anteos_pool);
         cboSelect.getItems().add(anteos);
 
         btnGo.setOnAction(this::begin);

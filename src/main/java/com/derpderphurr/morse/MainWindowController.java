@@ -117,6 +117,7 @@ public class MainWindowController extends VBox {
         tPracticeLetters.setPlayer(player);
         tSendingBasics.setPlayer(player);
 
+
     }
 
 }

@@ -7,17 +7,16 @@ import javax.sound.sampled.*;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 
 public class PlayerThread extends Thread {
 
-    private final SimpleBooleanProperty playing = new SimpleBooleanProperty(false);
-    private final SimpleIntegerProperty wpm = new SimpleIntegerProperty(20);
-    private final SimpleIntegerProperty tone = new SimpleIntegerProperty(660);
-    private final SimpleDoubleProperty volume = new SimpleDoubleProperty(4096); //probably should rescale this to the bounds of a short
+    private final SimpleBooleanProperty playing = new SimpleBooleanProperty(false); // true is playing
+    private final SimpleIntegerProperty wpm = new SimpleIntegerProperty(20); // value for words per minute
+    private final SimpleIntegerProperty tone = new SimpleIntegerProperty(660); //Value in hz of Tone
+    private final SimpleDoubleProperty volume = new SimpleDoubleProperty(0.75); //probably should rescale this to the bounds of a short
     private final SimpleBooleanProperty isRunning = new SimpleBooleanProperty(false);
 
     public IntegerProperty wpmProperty() { return wpm; }
@@ -61,19 +60,33 @@ public class PlayerThread extends Thread {
 
     private final ArrayBlockingQueue<Playable> queue = new ArrayBlockingQueue<>(20);
 
-    private void playCodeElement(CodeParticle thisElement, ByteBuffer bb) {
+    private void insertCodeElement(CodeParticle thisElement, ByteBuffer bb) {
         int numSamples = Codec.timeUnitsToNumSamples(thisElement.units, wpm.get(), sampleRate);
 
+        double pre = 2*Math.PI*(1/((double)sampleRate/(double)tone.get()));
+        int fadeFrames = 64;
+        double workingVolume = Short.MAX_VALUE * volume.get();
+        double volumeStep = workingVolume/fadeFrames;
+        double tVolume = 0;
+
+        System.out.println("Max Volume: "+workingVolume);
+
         for (int i = 0; i < numSamples; i++) {
-            if (thisElement.type == CodeParticle.Type.SPACE) {
-                bb.putShort((short) 0);
+            double angle = i*pre;
+            //double angle = 2.0 * Math.PI * i / ((double) sampleRate / (double) tone.get());
+            double out = (Math.sin(angle) * workingVolume);
+            if (thisElement.type == CodeParticle.Type.SPACE || i > (numSamples-fadeFrames)) {
+                tVolume -= volumeStep;
             } else {
-                double angle = 2.0 * Math.PI * i / ((double) sampleRate / (double) tone.get());
-                double out = (Math.sin(angle) * volume.get());
-                bb.putShort((short) out);
+                tVolume += volumeStep;
             }
-            line.write(bb.array(), 0, bb.limit());
-            bb.rewind();
+            if(tVolume < 0.01) {
+                tVolume = 0;
+            } else if(tVolume > workingVolume) {
+                tVolume = workingVolume;
+            }
+
+            bb.putShort((short)(Math.sin(pre*i)*tVolume));
         }
     }
 
@@ -96,15 +109,16 @@ public class PlayerThread extends Thread {
     private void playCodeList(Playable myJob,ByteBuffer bb) {
         var data = Codec.translateString(myJob.getMessage());
         for(CodeCharacter cc : data) {
-            Platform.runLater(() -> myJob.getReporter().accept(cc));
+            bb.rewind();
             //if(playPhonetic.get()) { playPhonetic(cc); }
             for(CodeParticle particle : cc.particles) {
                 if(cancelPlayback) { break; }
-                playCodeElement(particle,bb);
+                insertCodeElement(particle,bb);
             }
+            line.write(bb.array(),0,bb.position());
+            Platform.runLater(() -> myJob.getReporter().accept(cc));
             if(cancelPlayback) { break; }
         }
-
     }
 
     private void evalOscillatorMode(ByteBuffer bb) {
@@ -112,7 +126,6 @@ public class PlayerThread extends Thread {
 
         //long lastSample = 0;
         int i=0;
-
         while(oscOnFunct.test(null)) {
             //long cTime = System.currentTimeMillis();
             //if( (cTime - lastSample ) > interval) {
@@ -129,9 +142,8 @@ public class PlayerThread extends Thread {
     @Override
     public void run() {
 
-        ByteBuffer bb = ByteBuffer.allocate(2); //Allocate buffer up here to keep it from re-allocating in loop
+        ByteBuffer bb = ByteBuffer.allocate(sampleRate*5*2); //Allocate buffer up here to keep it from re-allocating in loop
         bb.order(ByteOrder.LITTLE_ENDIAN);
-
         try {
             line = AudioSystem.getSourceDataLine(defaultAudioFormat);
             line.open(defaultAudioFormat);
@@ -169,7 +181,9 @@ public class PlayerThread extends Thread {
 
             } catch (InterruptedException e) {
                 quit = true;
+
             }
         }
+        line.stop();
     }
 }

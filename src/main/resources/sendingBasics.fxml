@@ -1,6 +1,13 @@
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
 
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.Button?>
 <fx:root type="Tab" text="Sending Basics" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
-    <Label text="Press CTRL as Straight Key"/>
+    <VBox>
+        <Label text="Press CTRL as Straight Key"/>
+        <TextArea fx:id="decodeArea" editable="false" VBox.vgrow="ALWAYS"/>
+        <Button fx:id="btnReset" text="Reset"/>
+    </VBox>
 </fx:root>

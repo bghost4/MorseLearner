@@ -22,6 +22,8 @@
          <children>
             <ComboBox fx:id="cboSelect" maxWidth="1.7976931348623157E308" prefWidth="150.0" promptText="Select Exercise" HBox.hgrow="ALWAYS" />
             <Button fx:id="btnGo" mnemonicParsing="false" text="Begin" />
+            <Button fx:id="btnAgn" mnemonicParsing="false" text="Agn" />
+            <Button fx:id="btnGiveUp" mnemonicParsing="false" text="?"/>
          </children>
       </HBox>
       <TextFlow fx:id="tfBody" prefHeight="350.0" prefWidth="600.0" VBox.vgrow="ALWAYS" />

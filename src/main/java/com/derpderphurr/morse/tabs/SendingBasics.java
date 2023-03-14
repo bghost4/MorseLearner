@@ -1,10 +1,13 @@
 package com.derpderphurr.morse.tabs;
 
+import com.derpderphurr.morse.Codec;
 import com.derpderphurr.morse.PlayerThread;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
+import javafx.scene.control.TextArea;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.KeyEvent;
 import java.io.IOException;
@@ -15,9 +18,29 @@ public class SendingBasics extends Tab {
 
     private boolean keyPressed = false;
 
+    @FXML
+    private TextArea decodeArea;
+
+    @FXML
+    private Button btnReset;
+
+    private long lastEvent = System.currentTimeMillis();
+
     private EventHandler<InputEvent>
-            keyPressHandler = (in) -> { keyPressed = true; System.out.println("KEY ON"); },
-            keyReleaseHandler = (in) -> { keyPressed = false; System.out.println("KEY OFF"); };
+            keyPressHandler = (in) -> { keyPressed = true; lastEvent = System.currentTimeMillis(); },
+            keyReleaseHandler = (in) -> {
+                    keyPressed = false;
+                    long lastOnEvent = System.currentTimeMillis() - lastEvent;
+                    lastEvent = System.currentTimeMillis();
+                    System.out.printf("Key was on for %dl Millis\n",lastOnEvent);
+
+                    double approxTimeUnits = (double)lastOnEvent / (double)Codec.WPMToMsPerTimeUnit(player.wpmProperty().get());
+                    if(approxTimeUnits > 2.6) {
+                        decodeArea.appendText("-");
+                    } else {
+                        decodeArea.appendText(".");
+                    }
+            };
 
     public boolean isKeyPressed() { return keyPressed; }
 

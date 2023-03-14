@@ -158,6 +158,9 @@ public class Codec {
                 .collect(Collectors.toList());  // return a list of the mark,space elements
     }
 
+    public static int WPMToMsPerTimeUnit(int wpm) {
+        return 1000/(wpm*50/60);
+    }
 
     public static int WPMTimeUnitToNumSamples(int wpm,int sampleRate) {
         return (int)(1/(((double)wpm*50.0)/60.0/(double)sampleRate));

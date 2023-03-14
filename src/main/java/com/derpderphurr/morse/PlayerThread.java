@@ -22,7 +22,6 @@ public class PlayerThread extends Thread {
     public IntegerProperty wpmProperty() { return wpm; }
     public IntegerProperty toneProperty() { return tone; }
     public DoubleProperty volumeProperty() { return volume; }
-    public ReadOnlyBooleanProperty isRunningProperty() { return isRunning; }
     public ReadOnlyBooleanProperty isPlayingProperty() { return playing; }
 
     private SimpleBooleanProperty oscillatorMode = new SimpleBooleanProperty(false);
@@ -162,7 +161,6 @@ public class PlayerThread extends Thread {
                         case SAMPLES -> playSample(myJob.getSampleData());
                     }
                     Platform.runLater(myJob.getOnFinished());
-
             } catch (InterruptedException e) {
                 quit = true;
             }

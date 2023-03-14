@@ -23,7 +23,7 @@ public class EchoExercise<T> extends AbstractExercise<T,T> {
 
     @Override
     public Question<T, T> getQuestion() {
-        return pool.get(rand.nextInt(pool.size()-1));
+        return pool.get(rand.nextInt(pool.size()));
     }
 
     @Override
